@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<project name="log configuration" default="copy">
+
+  <property name="src.test.res.dir" value="${basedir}/src/test/resources" />
+
+  <target name="copy">
+    <!-- TODO: check if target file exists -->
+    <!-- TODO: copy to ant generated stuff dir -->
+    <!-- TODO: move source into other directory -->
+    <copy file="${src.test.res.dir}/log4j.xml.example"
+          tofile="${src.test.res.dir}/log4j.xml"
+          overwrite="false" />
+  </target>
+
+</project>
