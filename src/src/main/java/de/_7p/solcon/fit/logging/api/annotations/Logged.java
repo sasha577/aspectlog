@@ -20,37 +20,46 @@ public @interface Logged {
      * <p>
      * Default log level is DEBUG.
      */
-    public enum LogLevel {
-        /**
-         * Most specific log usually used during development
-         */
-        TRACE,
-        
-        /**
-         * More specific log usually used to find bugs
-         */
-        DEBUG,
-        
-        /**
-         * Specific log usually used to inform about general state changes
-         */
-        INFO,
-        
-        /**
-         * Log usually used to indicate harmful situations
-         */
-        WARN,
-        
+    public enum LogLevel{
+
         /**
          * Log usually used to indicate that exceptional cases occurred, but
          * execution can continue
          */
-        ERROR,
+        ERROR(1),
+       
+        /**
+         * Log usually used to indicate harmful situations
+         */
+        WARN(2),
         
         /**
-         * Log usually used to indicate that the execution cannot continue
+         * Specific log usually used to inform about general state changes
          */
-        FATAL
+        INFO(3),
+        
+        /**
+         * More specific log usually used to find bugs
+         */
+        DEBUG(4),
+
+        /**
+         * Most specific log usually used during development
+         */
+        TRACE(5);
+        
+        
+        
+        private final int level;
+        
+        private LogLevel(final int level) {
+            this.level = level;
+        }
+        
+        public final boolean higherOrEqualsThan(final LogLevel o) {
+            return (this.level - o.level) >= 0;
+        }
+        
     }
     
     LogLevel value() default LogLevel.DEBUG;

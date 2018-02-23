@@ -1,16 +1,21 @@
 package de._7p.solcon.fit.logging.common.formatters.tostring;
 
-import de._7p.solcon.fit.logging.common.formatters.tostring.common.Pair;
-import de._7p.solcon.fit.logging.common.formatters.tostring.entries.FormatterEntry;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import javax.xml.transform.TransformerFactory;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import de._7p.solcon.fit.logging.common.formatters.tostring.common.Pair;
+import de._7p.solcon.fit.logging.common.formatters.tostring.entries.FormatterEntry;
 
 /**
  * converts object to string

@@ -3,24 +3,25 @@ package de._7p.solcon.fit.common.common.common.formatters;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de._7p.solcon.fit.logging.api.annotations.Logged.LogLevel;
 import de._7p.solcon.fit.logging.common.formatters.MethodCallFormatter;
 
 public class MethodCallFormatterTest {
+    
     @Test
     public void testLogException_1()
         throws Exception {
         final String targetId = null;
         final Throwable e = new Throwable();
-        final Level level = Level.toLevel(1);
-        final Logger logger = Logger.getRootLogger();
+        final Logger logger = LoggerFactory.getLogger("");
         final String methodName = "methodName";
         final String clazzName = "ClazzName";
 
-        MethodCallFormatter.logException(targetId, e, level, logger, methodName, clazzName);
+        MethodCallFormatter.logException(targetId, e, LogLevel.DEBUG, logger, methodName, clazzName);
 
         //fail("unverified");
     }
@@ -30,12 +31,11 @@ public class MethodCallFormatterTest {
         throws Exception {
         final String targetId = "";
         final Throwable e = new Throwable();
-        final Level level = Level.toLevel(1);
-        final Logger logger = Logger.getRootLogger();
+        final Logger logger = LoggerFactory.getLogger("");
         final String methodName = "methodName";
         final String clazzName = "ClazzName";
 
-        MethodCallFormatter.logException(targetId, e, level, logger, methodName, clazzName);
+        MethodCallFormatter.logException(targetId, e, LogLevel.DEBUG, logger, methodName, clazzName);
 
         //fail("unverified");
     }
@@ -45,12 +45,11 @@ public class MethodCallFormatterTest {
         throws Exception {
         final String targetId = null;
         final Object[] args = new Object[] {};
-        final Level level = Level.toLevel(1);
-        final Logger logger = Logger.getRootLogger();
+        final Logger logger = LoggerFactory.getLogger("");
         final String methodName = "methodName";
         final String clazzName = "ClazzName";
 
-        MethodCallFormatter.logInvoke(targetId, args, level, logger, methodName, clazzName);
+        MethodCallFormatter.logInvoke(targetId, args, LogLevel.DEBUG, logger, methodName, clazzName);
 
         //fail("unverified");
     }
@@ -60,12 +59,11 @@ public class MethodCallFormatterTest {
         throws Exception {
         final String targetId = "";
         final Object[] args = new Object[] {};
-        final Level level = Level.toLevel(1);
-        final Logger logger = Logger.getRootLogger();
+        final Logger logger = LoggerFactory.getLogger("");
         final String methodName = "methodName";
         final String clazzName = "ClazzName";
 
-        MethodCallFormatter.logInvoke(targetId, args, level, logger, methodName, clazzName);
+        MethodCallFormatter.logInvoke(targetId, args, LogLevel.DEBUG, logger, methodName, clazzName);
 
         //fail("unverified");
     }
@@ -75,12 +73,11 @@ public class MethodCallFormatterTest {
         throws Exception {
         final String targetId = null;
         final Object result = new Object();
-        final Level level = Level.toLevel(1);
-        final Logger logger = Logger.getRootLogger();
+        final Logger logger = LoggerFactory.getLogger("");
         final String methodName = "methodName";
         final String clazzName = "ClazzName";
 
-        MethodCallFormatter.logResult(targetId, result, level, logger, methodName, clazzName);
+        MethodCallFormatter.logResult(targetId, result, LogLevel.DEBUG, logger, methodName, clazzName);
 
         //fail("unverified");
     }
@@ -90,12 +87,11 @@ public class MethodCallFormatterTest {
         throws Exception {
         final String targetId = "";
         final Object result = new Object();
-        final Level level = Level.toLevel(1);
-        final Logger logger = Logger.getRootLogger();
+        final Logger logger = LoggerFactory.getLogger("");
         final String methodName = "methodName";
         final String clazzName = "ClazzName";
 
-        MethodCallFormatter.logResult(targetId, result, level, logger, methodName, clazzName);
+        MethodCallFormatter.logResult(targetId, result, LogLevel.DEBUG, logger, methodName, clazzName);
 
         //fail("unverified");
     }

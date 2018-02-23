@@ -1,26 +1,13 @@
 package de._7p.solcon.fit.logging.common.formatters.tostring.common;
 
-import java.io.Serializable;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.log4j.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
-@SuppressWarnings("serial")
-public abstract class AbstractPair<T1,T2> implements Serializable{
+public abstract class AbstractPair<T1,T2>{
 
-    cc cc(){
-        final Class<?> clazz = null;
-        Logger logger = LoggerFactory.getLogger(clazz);
-        logger.is
-
-
-    }
     private final T1 first;
     private final T2 second;
 

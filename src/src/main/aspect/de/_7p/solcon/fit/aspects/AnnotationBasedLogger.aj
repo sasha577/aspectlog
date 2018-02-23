@@ -2,20 +2,18 @@ package de._7p.solcon.fit.aspects;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.reflect.ConstructorSignature;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de._7p.solcon.fit.logging.api.annotations.Logged;
 import de._7p.solcon.fit.logging.api.annotations.Logged.LogLevel;
+import de._7p.solcon.fit.logging.common.LogUtils;
 import de._7p.solcon.fit.logging.common.asserts.UncheckedThrow;
 import de._7p.solcon.fit.logging.common.formatters.MethodCallFormatter;
-import de.psi.telco.mccm.common.fp.Transformer;
-import de.psi.telco.mccm.common.fp.TransformerFactory;
 
 public final aspect AnnotationBasedLogger { // NO_UCD
 
@@ -30,11 +28,11 @@ public final aspect AnnotationBasedLogger { // NO_UCD
 
         final String methodName = signature.getName();
         final String clazzName = clazz.getSimpleName();
-        final Level level = LEVEL_2_LOG4J.transform(annotation.value());
-        final Logger logger = Logger.getLogger(clazz);
+        LogLevel level = annotation.value();
+        Logger logger = LoggerFactory.getLogger(clazz);
 
 
-        if (logger.isEnabledFor(level)) {
+        if (LogUtils.isEnabled(logger, level)) {
 
             final Object[] args = thisJoinPoint.getArgs();
             final String targetIdent = MethodCallFormatter.object2id(thisJoinPoint.getTarget());
@@ -66,18 +64,5 @@ public final aspect AnnotationBasedLogger { // NO_UCD
         }
 
     }
-
-    @SuppressWarnings("serial")
-    private static final Transformer<LogLevel, Level> LEVEL_2_LOG4J = TransformerFactory
-    .mapAdapter(AnnotationBasedLogger.class.getSimpleName(), new HashMap<LogLevel, Level>() {
-        {
-            put(LogLevel.TRACE, Level.TRACE);
-            put(LogLevel.DEBUG, Level.DEBUG);
-            put(LogLevel.WARN, Level.WARN);
-            put(LogLevel.INFO, Level.INFO);
-            put(LogLevel.ERROR, Level.ERROR);
-            put(LogLevel.FATAL, Level.FATAL);
-        }
-    });
 
 }
