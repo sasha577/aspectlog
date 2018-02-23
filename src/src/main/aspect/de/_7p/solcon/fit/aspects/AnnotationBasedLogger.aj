@@ -33,6 +33,7 @@ public final aspect AnnotationBasedLogger { // NO_UCD
         final Level level = LEVEL_2_LOG4J.transform(annotation.value());
         final Logger logger = Logger.getLogger(clazz);
 
+
         if (logger.isEnabledFor(level)) {
 
             final Object[] args = thisJoinPoint.getArgs();

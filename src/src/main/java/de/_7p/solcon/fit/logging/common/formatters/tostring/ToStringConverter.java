@@ -1,28 +1,23 @@
 package de._7p.solcon.fit.logging.common.formatters.tostring;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
-
+import de._7p.solcon.fit.logging.common.formatters.tostring.common.Pair;
 import de._7p.solcon.fit.logging.common.formatters.tostring.entries.FormatterEntry;
-import de.psi.telco.mccm.common.fp.CollectionUtils;
-import de.psi.telco.mccm.common.fp.Transformer;
-import de.psi.telco.mccm.common.fp.TransformerFactory;
-import de.psi.telco.mccm.common.util.Pair;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import javax.xml.transform.TransformerFactory;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * converts object to string
  * @author arubinov
  *
  */
-public final class ToStringConverter implements Transformer<Object,String>{
+public final class ToStringConverter implements Function<Object,String> {
 
 
     public static final ToStringConverter INSTANCE = 
@@ -34,23 +29,23 @@ public final class ToStringConverter implements Transformer<Object,String>{
     
     @SuppressWarnings("unchecked")
     public void registerEntry(final FormatterEntry<?> entry){
-        formatterRegistry.put(entry.getClazz(), (Transformer<Object, String>)entry.getFormatter());
+        formatterRegistry.put(entry.getClazz(), (Function<Object, String>)entry.getFormatter());
     }
-    
+
     public void registerFormatters(final Collection<FormatterEntry<?>> entries){
-        
+
         for(final FormatterEntry<?> e : entries){
             registerEntry(e);
         }
     }
-    
+
     @Override
-    public String transform(final Object o) {
+    public String apply(final Object o) {
         return format(o);
     }
 
     public String format(final Object o) {
-        return o != null ? getFormatter(o.getClass()).transform(o) : "null";
+        return o != null ? getFormatter(o.getClass()).apply(o) : "null";
     }
 
     public String format(final Object[] args){
@@ -58,12 +53,13 @@ public final class ToStringConverter implements Transformer<Object,String>{
     }
 
     public String printArrayItems(final Object[] args) {
-        
-        final Collection<String> params = 
-            CollectionUtils.transform(cutter.cut(args), TransformerFactory.concat(this, SUROUND));
+
+        final Collection<String> params =
+                Arrays.stream(cutter.cut(args)).map(this).map(SUROUND).collect(Collectors.toList());
+
 
         final String arrString = StringUtils.join(params,',');
-        
+
         if(cutter.exceedMaxSize(args)){
             return arrString + ", ...";
         }else{
@@ -76,32 +72,32 @@ public final class ToStringConverter implements Transformer<Object,String>{
         arrayFormatter = createArrayFormatter(this);
         formatterRegistry = createFormatterRegistry(this,cutter);
     }
-    
+
     private final ArrayCutter cutter;
-    private final Transformer<Object, String> arrayFormatter;
+    private final Function<Object, String> arrayFormatter;
 
-    private final Map<Class<?>, Transformer<Object, String>> formatterRegistry;
+    private final Map<Class<?>, Function<Object, String>> formatterRegistry;
 
-    private static final Transformer<String,String> SUROUND = new Transformer<String, String>() {
+    private static final Function<String,String> SUROUND = new Function<String, String>() {
 
         @Override
-        public String transform(final String o) {
+        public String apply(final String o) {
             return String.format("\u00AB%s\u00BB",o);
         }
     };
 
-    private Transformer<Object,String> getFormatter(final Class<?> key){
+    private Function<Object,String> getFormatter(final Class<?> key){
         if(key.isArray()){
             return arrayFormatter;
         }
         else{
-            final Transformer<Object, String> formatter = findFormatterByClass(key);
+            final Function<Object, String> formatter = findFormatterByClass(key);
             return formatter != null ? formatter : TO_STRING_FORMATTER;
         }
     }
 
-    private Transformer<Object, String> findFormatterByClass(final Class<?> key) {
-        for(final Map.Entry<Class<?>, Transformer<Object, String>> c: formatterRegistry.entrySet()){
+    private Function<Object, String> findFormatterByClass(final Class<?> key) {
+        for(final Map.Entry<Class<?>, Function<Object, String>> c: formatterRegistry.entrySet()){
             final Class<?> registredType = c.getKey();
             if(registredType.isAssignableFrom(key)){
                 return c.getValue();
@@ -110,8 +106,8 @@ public final class ToStringConverter implements Transformer<Object,String>{
         return null;
     }
 
-    private static final Transformer<Object, String> createArrayFormatter(final ToStringConverter toStringConverter){ return new Transformer<Object,String>(){@Override
-    public String transform(final Object o) {
+    private static final Function<Object, String> createArrayFormatter(final ToStringConverter toStringConverter){ return new Function<Object,String>(){@Override
+    public String apply(final Object o) {
         final Class<?> componentType = o.getClass().getComponentType();
         if( !componentType.isPrimitive() ) {
             return toStringConverter.format((Object[])o);
@@ -138,32 +134,34 @@ public final class ToStringConverter implements Transformer<Object,String>{
     }
 
     @SuppressWarnings("serial")
-    private static final Map<Class<?>, Transformer<Object, String>> createFormatterRegistry(
+    private static final Map<Class<?>, Function<Object, String>> createFormatterRegistry(
         final ToStringConverter toStringConverter,
         final ArrayCutter cutter){
 
-        return 
-        new HashMap<Class<?>, Transformer<Object, String>>(){{
+        return
+        new HashMap<Class<?>, Function<Object, String>>(){{
 
-            put(Collection.class, new Transformer<Object, String>(){
+            put(Collection.class, new Function<Object, String>(){
                 @Override
                 @SuppressWarnings("unchecked")
-                public String transform(final Object o) {
+                public String apply(final Object o) {
                     final Collection<Object> arg = (Collection<Object>)o;
                     final Collection<Object> col = cutter.cut(arg);
                     if(cutter.exceedMaxSize(arg)){
                         col.add("...");
                     }
-                    return CollectionUtils.toString(col,toStringConverter);}}
+                    return collection2String(col,toStringConverter);
+                }
+            }
             );
 
-            put(Pair.class, new Transformer<Object, String>(){
+            put(Pair.class, new Function<Object, String>(){
                 @Override
-                public String transform(final Object o) {
+                public String apply(final Object o) {
                     final Pair<?,?> pair = (Pair<?,?>)o;
                     return new ToStringBuilder(pair, ToStringStyle.SHORT_PREFIX_STYLE)
-                    .append(toStringConverter.transform(pair.getFirst()))
-                    .append(toStringConverter.transform(pair.getSecond()))
+                    .append(toStringConverter.apply(pair.getLeft()))
+                    .append(toStringConverter.apply(pair.getRight()))
                     .toString();}}
             );
 
@@ -171,9 +169,13 @@ public final class ToStringConverter implements Transformer<Object,String>{
         }};
     }
 
-    private static final Transformer<Object, String> TO_STRING_FORMATTER = new Transformer<Object, String>() {
+    private static String collection2String(final Collection<Object> col, final ToStringConverter toStringConverter) {
+        return String.format("{%s}", StringUtils.join(col.stream().map(toStringConverter).collect(Collectors.toList())), ',');
+    }
+
+    private static final Function<Object, String> TO_STRING_FORMATTER = new Function<Object, String>() {
         @Override
-        public String transform(final Object o) {
+        public String apply(final Object o) {
 
             final String nameStartsWith = o.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(o));
             final String oToString = o.toString();

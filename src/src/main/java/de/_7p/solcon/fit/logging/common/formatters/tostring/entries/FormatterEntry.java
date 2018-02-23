@@ -1,16 +1,18 @@
 package de._7p.solcon.fit.logging.common.formatters.tostring.entries;
 
-import de.psi.telco.mccm.common.fp.Transformer;
-import de.psi.telco.mccm.common.util.AbstractPair;
+
+import de._7p.solcon.fit.logging.common.formatters.tostring.common.AbstractPair;
+
+import java.util.function.Function;
 
 @SuppressWarnings("serial")
-public final class FormatterEntry<T> extends AbstractPair<Class<T>, Transformer<T, String>>{
+public final class FormatterEntry<T> extends AbstractPair<Class<T>, Function<T, String>> {
 
-    public static <T> FormatterEntry<T> create(final Class<T> clazz, final Transformer<T, String> formatter){
+    public static <T> FormatterEntry<T> create(final Class<T> clazz, final Function<T, String> formatter){
         return new FormatterEntry<T>(clazz, formatter);
     }
     
-    private FormatterEntry(final Class<T> clazz, final Transformer<T, String> formatter) {
+    private FormatterEntry(final Class<T> clazz, final Function<T, String> formatter) {
         super(clazz, formatter);
     }
 
@@ -18,7 +20,7 @@ public final class FormatterEntry<T> extends AbstractPair<Class<T>, Transformer<
         return super.getFirst();
     }
     
-    public Transformer<T, String> getFormatter() {
+    public Function<T, String> getFormatter() {
         return super.getSecond();
     }
 }
